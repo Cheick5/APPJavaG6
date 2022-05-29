@@ -2,9 +2,10 @@ package com.uai.app.ui;
 
 import com.uai.app.dominio.Libro;
 import com.uai.app.exceptions.BookNotFoundException;
-import com.uai.app.exceptions.DataNotLoadedException;
 import com.uai.app.logic.DataManager;
+import com.uai.app.logic.SearchManager;
 import com.uai.app.logic.builders.LibroBuilder;
+import com.uai.app.ui.mostrarDatos.MostrarEditar;
 import com.uai.app.ui.utils.UAIJFrame;
 import com.uai.app.ui.utils.UIBuilder;
 
@@ -17,10 +18,14 @@ public class BuscarEditarUI extends UAIJFrame {
     private JPanel mainTableConatiner;
     private JTextField textField1;
     private JButton buscarButton;
+    static Libro buscar;
     static String[] response;
 
     public static String [] getresponse() {
         return response;
+    }
+    public static Libro getbuscar() {
+        return buscar;
     }
 
     public BuscarEditarUI(String title) {
@@ -28,22 +33,24 @@ public class BuscarEditarUI extends UAIJFrame {
         this.setMainPanel(mainPanel);
         String[] titles = { "titulo", "autor", "anio", "estante_numero", "estante_seccion", "piso", "edificio",
                 "sede" };
+        buscar=null;
+
         buscarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String eleccion = textField1.getText();
 
-                Libro buscar = null;
                 try {
                     LibroBuilder builder = new LibroBuilder();
                     builder.withTitulo(eleccion);
                     Libro search = builder.build();
 
-                    buscar = DataManager.getInstance().buscarLibro(search);
+                    buscar = SearchManager.getInstance().buscarLibro(search);
 
                 } catch (BookNotFoundException ex) {
                     System.err.println("Libro no encontrado");
                 }
+
                 if (buscar!=null){
                     response= buscar.getDataToCsv();
                     dispose();
